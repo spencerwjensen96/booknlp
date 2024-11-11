@@ -600,6 +600,30 @@ class EnglishBookNLP:
 
 						
 						out.write("</html>")
+					
+					with open(join(outFolder, "%s.book.json" % (idd)), "w", encoding="utf-8") as out:
+						out.write("{")
+
+						beforeToks=[""]*len(tokens)
+						afterToks=[""]*len(tokens)
+
+						lastP=None
+
+						for idx, (start, end) in enumerate(quotes):
+							mention_id=attributed_quotations[idx]
+							if mention_id is not None:
+								speaker_id=assignments[mention_id]
+								name=names[speaker_id].most_common(1)[0][0]
+							else:
+								speaker_id="None"
+								name="None"
+							beforeToks[start]+="{'text':'''"
+							afterToks[end]+="''', 'speaker_id': '%s', 'name': '%s'}," % (speaker_id, name)
+
+						for idx in range(len(tokens)):
+							out.write("%s%s%s " % (beforeToks[idx], escape(tokens[idx].text), afterToks[idx])) 
+						
+						out.write("}")
 
 				print("--- TOTAL (excl. startup): %.3f seconds ---, %s words" % (time.time() - originalTime, len(tokens)))
 				return time.time() - originalTime
