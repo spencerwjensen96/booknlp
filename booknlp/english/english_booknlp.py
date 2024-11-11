@@ -327,7 +327,8 @@ class EnglishBookNLP:
 			
 		return data
 			
-
+	def print_json_book(self, character_info):
+		print(json.dumps(character_info, indent=4))
 
 	def process(self, filename, outFolder, idd):		
 
@@ -602,7 +603,7 @@ class EnglishBookNLP:
 						out.write("</html>")
 					
 					with open(join(outFolder, "%s.book.json" % (idd)), "w", encoding="utf-8") as out:
-						out.write("{")
+						out.write("{'text': \"")
 
 						beforeToks=[""]*len(tokens)
 						afterToks=[""]*len(tokens)
@@ -617,13 +618,15 @@ class EnglishBookNLP:
 							else:
 								speaker_id="None"
 								name="None"
-							beforeToks[start]+="{'text':'''"
-							afterToks[end]+="''', 'speaker_id': '%s', 'name': '%s'}," % (speaker_id, name)
+							beforeToks[start]+="\", 'speaker_id': '%s', 'name': '%s'},{'text':\"" % (0, "Narrator")
+							afterToks[end]+="\", 'speaker_id': '%s', 'name': '%s'},{'text': \"" % (speaker_id, name)
 
 						for idx in range(len(tokens)):
+							# if tokens[idx].paragraph_id != lastP:
+
 							out.write("%s%s%s " % (beforeToks[idx], escape(tokens[idx].text), afterToks[idx])) 
 						
-						out.write("}")
+						out.write("\", 'speaker_id': '%s', 'name': '%s'}}"  % (0, "Narrator"))
 
 				print("--- TOTAL (excl. startup): %.3f seconds ---, %s words" % (time.time() - originalTime, len(tokens)))
 				return time.time() - originalTime
