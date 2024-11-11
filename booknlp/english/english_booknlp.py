@@ -620,8 +620,8 @@ class EnglishBookNLP:
 								speaker_id="None"
 								name="None"
 							
-							beforeToks[start]+="\", \"speaker_id\": \"%s\", \"name\": \"%s\"}, %s: {\"text\":\"" % (0, "Narrator", count_id)
-							afterToks[end]+="\", \"speaker_id\": \"%s\", \"name\": \"%s\"}, %s: {\"text\": \"" % (speaker_id, name, count_id + 1)
+							beforeToks[start]+="\", \"speaker_id\": \"%s\", \"name\": \"%s\"}, \"%s\": {\"text\":\"" % (0, "Narrator", count_id)
+							afterToks[end]+="\", \"speaker_id\": \"%s\", \"name\": \"%s\"}, \"%s\": {\"text\": \"" % (speaker_id, name, count_id + 1)
 							count_id += 2
 
 						for idx in range(len(tokens)):
