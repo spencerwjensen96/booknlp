@@ -603,8 +603,9 @@ class EnglishBookNLP:
 						out.write("</html>")
 					
 					with open(join(outFolder, "%s.book.json" % (idd)), "w", encoding="utf-8") as out:
-						out.write("{'text': \"")
-
+						count_id = 0
+						out.write("%s: {'text': \"" % count_id)
+						count_id += 1
 						beforeToks=[""]*len(tokens)
 						afterToks=[""]*len(tokens)
 
@@ -618,8 +619,10 @@ class EnglishBookNLP:
 							else:
 								speaker_id="None"
 								name="None"
-							beforeToks[start]+="\", 'speaker_id': '%s', 'name': '%s'},{'text':\"" % (0, "Narrator")
-							afterToks[end]+="\", 'speaker_id': '%s', 'name': '%s'},{'text': \"" % (speaker_id, name)
+							
+							beforeToks[start]+="\", 'speaker_id': '%s', 'name': '%s'}, %s: {'text':\"" % (0, "Narrator", count_id)
+							afterToks[end]+="\", 'speaker_id': '%s', 'name': '%s'}, %s: {'text': \"" % (speaker_id, name, count_id + 1)
+							count_id += 2
 
 						for idx in range(len(tokens)):
 							# if tokens[idx].paragraph_id != lastP:
