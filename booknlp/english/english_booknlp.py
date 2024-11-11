@@ -604,7 +604,7 @@ class EnglishBookNLP:
 					
 					with open(join(outFolder, "%s.book.json" % (idd)), "w", encoding="utf-8") as out:
 						count_id = 0
-						out.write("{%s: {\"text\": \"" % count_id)
+						out.write("{\"%s\": {\"text\": \"" % count_id)
 						count_id += 1
 						beforeToks=[""]*len(tokens)
 						afterToks=[""]*len(tokens)
