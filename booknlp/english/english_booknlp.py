@@ -604,12 +604,14 @@ class EnglishBookNLP:
 					
 					with open(join(outFolder, "%s.book.json" % (idd)), "w", encoding="utf-8") as out:
 						count_id = 0
-						out.write("{\"%s\": {\"text\": \"" % count_id)
+						# out.write("{\"%s\": {\"text\": \"" % count_id)
 						count_id += 1
 						beforeToks=[""]*len(tokens)
 						afterToks=[""]*len(tokens)
 
 						lastP=None
+
+						quotations = []
 
 						for idx, (start, end) in enumerate(quotes):
 							mention_id=attributed_quotations[idx]
@@ -619,17 +621,22 @@ class EnglishBookNLP:
 							else:
 								speaker_id="None"
 								name="None"
+							quote_ = [x.text for x in tokens[start:end]]
+							quotations.append((speaker_id, name, quote_, start, end))
 							
 							beforeToks[start]+="\", \"speaker_id\": \"%s\", \"name\": \"%s\"}, \"%s\": {\"text\":\"" % (0, "Narrator", count_id)
 							afterToks[end]+="\", \"speaker_id\": \"%s\", \"name\": \"%s\"}, \"%s\": {\"text\": \"" % (speaker_id, name, count_id + 1)
 							count_id += 2
+						
+						for q in quotations:
+							out.write("speaker_id: %s, name: %s, quote: %s, start: %s, end: %s" % q)
 
-						for idx in range(len(tokens)):
+						# for idx in range(len(tokens)):
 							# if tokens[idx].paragraph_id != lastP:
 
-							out.write("%s%s%s " % (beforeToks[idx], escape(tokens[idx].text), afterToks[idx])) 
+							# out.write("%s%s%s " % (beforeToks[idx], escape(tokens[idx].text), afterToks[idx])) 
 						
-						out.write("\", 'speaker_id': '%s', 'name': '%s'}}"  % (0, "Narrator"))
+						# out.write("\", 'speaker_id': '%s', 'name': '%s'}}"  % (0, "Narrator"))
 
 				print("--- TOTAL (excl. startup): %.3f seconds ---, %s words" % (time.time() - originalTime, len(tokens)))
 				return time.time() - originalTime
