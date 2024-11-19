@@ -603,40 +603,44 @@ class EnglishBookNLP:
 						out.write("</html>")
 					
 					with open(join(outFolder, "%s.book.json" % (idd)), "w", encoding="utf-8") as out:
-						count_id = 0
-						# out.write("{\"%s\": {\"text\": \"" % count_id)
-						count_id += 1
-						beforeToks=[""]*len(tokens)
-						afterToks=[""]*len(tokens)
-
-						lastP=None
-
+						lastP = None
 						quotations = []
 
+						# Step 1: Collect original quotations
 						for idx, (start, end) in enumerate(quotes):
-							mention_id=attributed_quotations[idx]
+							mention_id = attributed_quotations[idx]
 							if mention_id is not None:
-								speaker_id=assignments[mention_id]
-								name=names[speaker_id].most_common(1)[0][0]
+								speaker_id = assignments[mention_id]
+								name = names[speaker_id].most_common(1)[0][0]
 							else:
-								speaker_id="None"
-								name="None"
+								speaker_id = "None"
+								name = "None"
 							quote_ = [x.text for x in tokens[start:end]]
 							quotations.append((speaker_id, name, quote_, start, end))
-							
-							beforeToks[start]+="\", \"speaker_id\": \"%s\", \"name\": \"%s\"}, \"%s\": {\"text\":\"" % (0, "Narrator", count_id)
-							afterToks[end]+="\", \"speaker_id\": \"%s\", \"name\": \"%s\"}, \"%s\": {\"text\": \"" % (speaker_id, name, count_id + 1)
-							count_id += 2
 						
-						for q in quotations:
-							out.write("speaker_id: %s, name: %s, quote: %s, start: %s, end: %s" % q)
-
-						# for idx in range(len(tokens)):
-							# if tokens[idx].paragraph_id != lastP:
-
-							# out.write("%s%s%s " % (beforeToks[idx], escape(tokens[idx].text), afterToks[idx])) 
+						# Step 2: Add in-between text as implicit quotations
+						implicit_speaker_id = "Implicit"
+						implicit_name = "Narration"
+						last_end = 0  # Initialize to the start of the document
 						
-						# out.write("\", 'speaker_id': '%s', 'name': '%s'}}"  % (0, "Narrator"))
+						for speaker_id, name, quote_, start, end in quotations:
+							# If there's a gap between the last_end and current start, add it
+							if start > last_end:
+								in_between_tokens = [x.text for x in tokens[last_end:start]]
+								if in_between_tokens:  # Avoid adding empty text
+									quotations.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
+							last_end = end  # Update to current end
+
+						# Handle trailing text after the last quotation
+						if last_end < len(tokens):
+							trailing_tokens = [x.text for x in tokens[last_end:]]
+							if trailing_tokens:  # Avoid adding empty text
+								quotations.append((implicit_speaker_id, implicit_name, trailing_tokens, last_end, len(tokens)))
+
+						# Step 3: Write all quotations to the output file
+						for q in sorted(quotations, key=lambda x: x[3]):  # Sort by start index
+							out.write("speaker_id: %s, name: %s, quote: %s, start: %s, end: %s\n" % q)
+
 
 				print("--- TOTAL (excl. startup): %.3f seconds ---, %s words" % (time.time() - originalTime, len(tokens)))
 				return time.time() - originalTime
