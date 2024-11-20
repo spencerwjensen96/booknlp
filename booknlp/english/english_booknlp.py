@@ -99,7 +99,7 @@ class EnglishBookNLP:
 				self.quoteAttribModel=model_params["quote_attribution_model_path"]
 
 
-			self.doEntities=self.doCoref=self.doQuoteAttrib=self.doSS=self.doEvent=False
+			self.doEntities=self.doCoref=self.doQuoteAttrib=self.doSS=self.doEvent=self.literal=False
 
 			for pipe in pipes:
 				if pipe not in valid_keys:
@@ -115,6 +115,10 @@ class EnglishBookNLP:
 					self.doSS=True
 				elif pipe == "quote":
 					self.doQuoteAttrib=True
+				elif pipe == "literal":
+					self.doEntities=True
+					self.doQuoteAttrib=True
+					self.literal=True
 
 			tagsetPath="data/entity_cat.tagset"
 			tagsetPath = pkg_resources.resource_filename(__name__, tagsetPath)
@@ -133,14 +137,15 @@ class EnglishBookNLP:
 			if not self.doEntities and self.doCoref:
 				print("coref requires entity tagging")
 				sys.exit(1)
-
 			if not self.doQuoteAttrib and self.doCoref:
 				print("coref requires quotation attribution")
 				sys.exit(1)
 			if not self.doEntities and self.doQuoteAttrib:
 				print("quotation attribution requires entity tagging")
 				sys.exit(1)	
-
+			if not self.doQuoteAttrib and self.literal:
+				print("literal pipeline requires quotation attribution")
+				sys.exit(1)	
 
 			self.quoteTagger=QuoteTagger()
 
@@ -622,25 +627,50 @@ class EnglishBookNLP:
 						implicit_speaker_id = "Implicit"
 						implicit_name = "Narration"
 						last_end = 0  # Initialize to the start of the document
-						
+						narration = []
 						for speaker_id, name, quote_, start, end in quotations:
 							# If there's a gap between the last_end and current start, add it
 							if start > last_end:
 								in_between_tokens = [x.text for x in tokens[last_end:start]]
 								if in_between_tokens:  # Avoid adding empty text
-									quotations.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
+									narration.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
 							last_end = end  # Update to current end
 
 						# Handle trailing text after the last quotation
 						if last_end < len(tokens):
 							trailing_tokens = [x.text for x in tokens[last_end:]]
 							if trailing_tokens:  # Avoid adding empty text
-								quotations.append((implicit_speaker_id, implicit_name, trailing_tokens, last_end, len(tokens)))
+								narration.append((implicit_speaker_id, implicit_name, trailing_tokens, last_end, len(tokens)))
 
+						# out.write('[{"t":"' + idd + '","lines":[')
+						json_output = {}
+						json_output["t"] = idd
+						json_output["lines"] = []
+						json_output["e"] = "system"
+						json_output["r"] = "book"
+
+						last_speaker = -1
 						# Step 3: Write all quotations to the output file
-						for q in sorted(quotations, key=lambda x: x[3]):  # Sort by start index
-							out.write("speaker_id: %s, name: %s, quote: %s, start: %s, end: %s\n" % q)
-
+						for q in sorted(quotations + narration, key=lambda x: x[3]):  # Sort by start index
+							#TODO out.write('"%s","e": [5],"r": "n","c": %s' % (' '.join(q[2]), q[0]))
+							role = ""
+							# speaker continues
+							if q[0] == last_speaker:
+								role = "sc"
+							# new speaker
+							elif q[0] != last_speaker and q[0] != implicit_speaker_id:
+								role = "s"
+							# narrator starts
+							elif q[0] == implicit_speaker_id and q[0] != last_speaker:
+								role = "n"
+							# narrator continues
+							elif q[0] == implicit_speaker_id and q[0] == last_speaker:
+								role = "ns"
+							json_output["lines"].append({"c": q[0], "t": ' '.join(q[2]), "e": ["system"], "r": role})
+							last_speaker = q[0]
+							# out.write("speaker_id: %s, name: %s, quote: %s, start: %s, end: %s\n" % q)
+						# out.write('],"e": [5],"r": "c"}]')
+						json.dump(json_output, out)
 
 				print("--- TOTAL (excl. startup): %.3f seconds ---, %s words" % (time.time() - originalTime, len(tokens)))
 				return time.time() - originalTime
