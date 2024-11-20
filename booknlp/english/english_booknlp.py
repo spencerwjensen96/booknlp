@@ -35,7 +35,7 @@ class EnglishBookNLP:
 
 			spacy_nlp = spacy.load(spacy_model, disable=["ner"])
 
-			valid_keys=set("entity,event,supersense,quote,coref".split(","))
+			valid_keys=set("entity,event,supersense,quote,coref,literal".split(","))
 			
 			pipes=model_params["pipeline"].split(",")
 
@@ -116,8 +116,6 @@ class EnglishBookNLP:
 				elif pipe == "quote":
 					self.doQuoteAttrib=True
 				elif pipe == "literal":
-					self.doEntities=True
-					self.doQuoteAttrib=True
 					self.literal=True
 
 			tagsetPath="data/entity_cat.tagset"
