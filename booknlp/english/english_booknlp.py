@@ -141,8 +141,8 @@ class EnglishBookNLP:
 			if not self.doEntities and self.doQuoteAttrib:
 				print("quotation attribution requires entity tagging")
 				sys.exit(1)	
-			if not self.doQuoteAttrib and self.literal:
-				print("literal pipeline requires quotation attribution")
+			if not self.doCoref and self.literal:
+				print("literal pipeline requires coreference disambiguation")
 				sys.exit(1)	
 
 			self.quoteTagger=QuoteTagger()
@@ -604,7 +604,8 @@ class EnglishBookNLP:
 
 						
 						out.write("</html>")
-					
+			
+				if self.literal:
 					with open(join(outFolder, "%s.book.json" % (idd)), "w", encoding="utf-8") as out:
 						lastP = None
 						quotations = []
