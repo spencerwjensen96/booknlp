@@ -636,7 +636,8 @@ class EnglishBookNLP:
 									narration.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
 							last_end = end  # Update to current end
 						pattern = r'(\bCHAPTER\s+[IVXLCDM]+\b.)'
-						for (id, name, sentence, start, end) in narration:
+						for (id, name, sentence_tokens, start, end) in narration:
+							sentence = " ".join(sentence)
 							bits = re.split(pattern, sentence)
 							words = sentence.split()
 
