@@ -635,7 +635,7 @@ class EnglishBookNLP:
 								if in_between_tokens:  # Avoid adding empty text
 									narration.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
 							last_end = end  # Update to current end
-						pattern = r'(\bCHAPTER\s+[IVXLCDM]+\b)'
+						pattern = r'(\bCHAPTER\s+[IVXLCDM]+\b.)'
 						for (id, name, sentence, start, end) in narration:
 							bits = re.split(pattern, sentence)
 							words = sentence.split()
@@ -651,8 +651,8 @@ class EnglishBookNLP:
 								if part.strip() == "":
 									continue
 								part_words = part.split()
-								start_token = word_to_token[current_token_idx][1] if part_words else None
-								end_token = word_to_token[current_token_idx + len(part_words) - 1][1] if part_words else None
+								start_token = word_to_token[current_token_idx][1]
+								end_token = word_to_token[current_token_idx + len(part_words) - 1][1]
 								current_token_idx += len(part_words)
 								label = 'chapter' if re.fullmatch(pattern.strip("()"), part) else implicit_name
 								
