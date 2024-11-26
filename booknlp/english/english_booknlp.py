@@ -506,7 +506,7 @@ class EnglishBookNLP:
 						else:
 							names[coref][text.lower()]+=.001
 
-
+					
 					with open(join(outFolder, "%s.book.html" % (idd)), "w", encoding="utf-8") as out:
 						out.write("<html>")
 						out.write("""<head>
@@ -670,7 +670,8 @@ class EnglishBookNLP:
 							# out.write("speaker_id: %s, name: %s, quote: %s, start: %s, end: %s\n" % q)
 						# out.write('],"e": [5],"r": "c"}]')
 						json.dump(json_output, out)
-
+				if self.literal:
+					print("--- LITERAL: output written to %s ---" % join(outFolder, "%s.book.json" % (idd)))
 				print("--- TOTAL (excl. startup): %.3f seconds ---, %s words" % (time.time() - originalTime, len(tokens)))
 				return time.time() - originalTime
 
