@@ -647,7 +647,7 @@ class EnglishBookNLP:
 
 							word_to_token = list(zip(words, token_labels))
 							current_token_idx = start
-							for part in len(bits):
+							for part in bits:
 								if part.strip() == "":
 									continue
 								part_words = part.split()
