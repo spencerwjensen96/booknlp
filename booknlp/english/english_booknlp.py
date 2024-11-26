@@ -10,6 +10,7 @@ from booknlp.english.litbank_quote import QuoteTagger
 from booknlp.english.bert_qa import QuotationAttribution
 from os.path import join
 import os
+import re
 import json
 from collections import Counter
 from html import escape
@@ -634,6 +635,28 @@ class EnglishBookNLP:
 								if in_between_tokens:  # Avoid adding empty text
 									narration.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
 							last_end = end  # Update to current end
+						pattern = r'\bCHAPTER\s+[IVXLCDM]+\b'
+						for (id, name, sentence, start, end) in narration:
+							bits = re.split(pattern, sentence)
+							words = sentence.split()
+
+							token_labels = range(start, end)
+
+							if len(words) != len(token_labels):
+								raise ValueError("Token labels length must match the number of words in the sentence.")
+
+							word_to_token = list(zip(words, token_labels))
+							current_token_idx = start
+							for part in len(bits):
+								if part.strip() == "":
+									continue
+								part_words = part.split()
+								start_token = word_to_token[current_token_idx][1] if part_words else None
+								end_token = word_to_token[current_token_idx + len(part_words) - 1][1] if part_words else None
+								current_token_idx += len(part_words)
+								label = 'chapter' if re.fullmatch(pattern.strip("()"), part) else implicit_name
+								
+								narration.append((implicit_speaker_id, label, part_words, start_token, end_token))
 
 						# Handle trailing text after the last quotation
 						if last_end < len(tokens):
@@ -642,12 +665,9 @@ class EnglishBookNLP:
 								narration.append((implicit_speaker_id, implicit_name, trailing_tokens, last_end, len(tokens)))
 
 						# out.write('[{"t":"' + idd + '","lines":[')
-						json_output = {}
-						json_output["t"] = idd
-						json_output["lines"] = []
-						json_output["e"] = "system"
-						json_output["r"] = "book"
+						json_output = []
 
+						lines = []
 						last_speaker = -1
 						# Step 3: Write all quotations to the output file
 						for q in sorted(quotations + narration, key=lambda x: x[3]):  # Sort by start index
@@ -665,7 +685,10 @@ class EnglishBookNLP:
 							# narrator continues
 							elif q[0] == implicit_speaker_id and q[0] == last_speaker:
 								role = "ns"
-							json_output["lines"].append({"c": q[0], "t": ' '.join(q[2]), "e": ["system"], "r": role})
+							if q[1] == 'chapter':
+								json_output.append({"lines": lines, "t": ' '.join(q[2]), "e": ["system"], "r": role})
+							else:
+								lines.append({"c": q[0], "t": ' '.join(q[2]), "e": ["system"], "r": role})
 							last_speaker = q[0]
 							# out.write("speaker_id: %s, name: %s, quote: %s, start: %s, end: %s\n" % q)
 						# out.write('],"e": [5],"r": "c"}]')
