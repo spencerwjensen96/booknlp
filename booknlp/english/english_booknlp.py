@@ -624,8 +624,10 @@ class EnglishBookNLP:
 							quotations.append((speaker_id, name, quote_, start, end))
 						
 						# Step 2: Add in-between text as implicit quotations
-						implicit_speaker_id = "Implicit"
-						implicit_name = "Narration"
+						implicit_speaker_id = "implicit"
+						implicit_name = "narration"
+						header_id = "header"
+						header_name = "chapter"
 						last_end = 0  # Initialize to the start of the document
 						narration = []
 						for speaker_id, name, quote_, start, end in quotations:
@@ -640,7 +642,7 @@ class EnglishBookNLP:
 										for part in bits:
 											words = part.split()
 											if words:
-												narration.append((-100, "chapter", words, last_end, last_end + len(words)))
+												narration.append((header_id, header_name, words, last_end, last_end + len(words)))
 												last_end += len(words)
 									narration.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
 							last_end = end  # Update to current end
@@ -697,7 +699,8 @@ class EnglishBookNLP:
 							# narrator continues
 							elif q[0] == implicit_speaker_id and q[0] == last_speaker:
 								role = "ns"
-							if q[1] == 'chapter':
+							# chapter header
+							if q[0] == header_id:
 								json_output.append({"lines": lines, "t": ' '.join(q[2]), "e": ["system"], "r": role})
 							else:
 								lines.append({"c": q[0], "t": ' '.join(q[2]), "e": ["system"], "r": role})
