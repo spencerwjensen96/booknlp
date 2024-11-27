@@ -641,15 +641,15 @@ class EnglishBookNLP:
 							bits = re.split(pattern, sentence)
 							words = sentence.split()
 
-							token_labels = range(start, end + 1)
+							token_labels = [x for x in range(start, end + 1)]
 
 							if len(words) != len(token_labels):
-								print("Words: %s" % words)
-								print("Tokens: %s" % token_labels)
+								print("Words: %s" % len(words))
+								print("Tokens: %s" % len(token_labels))
 								raise ValueError("Token labels length must match the number of words in the sentence.")
 
 							word_to_token = list(zip(words, token_labels))
-							current_token_idx = 0
+							current_token_idx = start
 							for part in bits:
 								if part.strip() == "":
 									continue
