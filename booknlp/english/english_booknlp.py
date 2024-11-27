@@ -679,6 +679,7 @@ class EnglishBookNLP:
 							# chapter header
 							if q[0] == header_id:
 								json_output.append({"t": ' '.join(q[2]), "lines": lines, "e": ["system"], "r": role})
+								lines = []
 							else:
 								cleaned_text = re.sub(r'\s+([,.!?;:])', r'\1', ' '.join(q[2]))
 								if cleaned_text == "\"":
