@@ -644,6 +644,8 @@ class EnglishBookNLP:
 							token_labels = range(start, end)
 
 							if len(words) != len(token_labels):
+								print("Words: %s" % words)
+								print("Tokens: %s" % token_labels)
 								raise ValueError("Token labels length must match the number of words in the sentence.")
 
 							word_to_token = list(zip(words, token_labels))
