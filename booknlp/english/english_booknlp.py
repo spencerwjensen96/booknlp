@@ -635,12 +635,13 @@ class EnglishBookNLP:
 								if in_between_tokens:  # Avoid adding empty text
 									sentence = " ".join(in_between_tokens)
 									pattern = r'(\bCHAPTER\s+[IVXLCDM]+\b.)'
-									bits = re.split(pattern, sentence)
-									for part in bits:
-										words = part.split()
-										if words:
-											narration.append((implicit_speaker_id, implicit_name, words, last_end, last_end + len(words)))
-											last_end += len(words)
+									bits = [x for x in re.split(pattern, sentence) if x != '']
+									if len(bits) > 1:
+										for part in bits:
+											words = part.split()
+											if words:
+												narration.append((-100, "chapter", words, last_end, last_end + len(words)))
+												last_end += len(words)
 									narration.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
 							last_end = end  # Update to current end
 						# pattern = r'(\bCHAPTER\s+[IVXLCDM]+\b.)'
@@ -703,6 +704,8 @@ class EnglishBookNLP:
 							last_speaker = q[0]
 							# out.write("speaker_id: %s, name: %s, quote: %s, start: %s, end: %s\n" % q)
 						# out.write('],"e": [5],"r": "c"}]')
+						if len(json_output) == 0:
+							json_output.append({"lines": lines, "t": "book", "e": ["system"], "r": ""})
 						json.dump(json_output, out)
 				if self.literal:
 					print("--- LITERAL: output written to %s ---" % join(outFolder, "%s.book.json" % (idd)))
