@@ -637,7 +637,7 @@ class EnglishBookNLP:
 							last_end = end  # Update to current end
 						pattern = r'(\bCHAPTER\s+[IVXLCDM]+\b.)'
 						for (id, name, sentence_tokens, start, end) in narration:
-							sentence = " ".join(sentence)
+							sentence = " ".join(sentence_tokens)
 							bits = re.split(pattern, sentence)
 							words = sentence.split()
 
