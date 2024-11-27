@@ -334,7 +334,7 @@ class EnglishBookNLP:
 	def print_json_book(self, character_info):
 		print(json.dumps(character_info, indent=4))
 
-	def process(self, filename, outFolder, idd):		
+	def process(self, filename, outFolder, idd, regex_chapter_pattern=r'(\bCHAPTER\s+[IVXLCDM]+\b.)'):		
 
 		with torch.no_grad():
 
@@ -636,13 +636,12 @@ class EnglishBookNLP:
 								in_between_tokens = [x.text for x in tokens[last_end:start]]
 								if in_between_tokens:  # Avoid adding empty text
 									sentence = " ".join(in_between_tokens)
-									pattern = r'(\bCHAPTER\s+[IVXLCDM]+\b.)'
-									bits = [x for x in re.split(pattern, sentence) if x != '']
+									bits = [x for x in re.split(regex_chapter_pattern, sentence) if x != '']
 									if len(bits) > 1:
 										for part in bits:
 											words = part.split()
 											if words:
-												if re.fullmatch(pattern.strip("()"), part):
+												if re.fullmatch(regex_chapter_pattern.strip("()"), part):
 													narration.append((header_id, header_name, words, last_end, last_end + len(words)))
 												else:
 													narration.append((implicit_speaker_id, implicit_name, words, last_end, last_end + len(words)))
@@ -715,7 +714,7 @@ class EnglishBookNLP:
 							json_output.append({"lines": lines, "t": "book", "e": ["system"], "r": ""})
 						json.dump(json_output, out)
 				if self.literal:
-					print("--- LITERAL: output written to %s ---" % join(outFolder, "%s.book.json" % (idd)))
+					print("--- literal: output json %.3f seconds ---" % time.time() - originalTime)
 				print("--- TOTAL (excl. startup): %.3f seconds ---, %s words" % (time.time() - originalTime, len(tokens)))
 				return time.time() - originalTime
 
