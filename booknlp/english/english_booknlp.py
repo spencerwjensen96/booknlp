@@ -647,7 +647,7 @@ class EnglishBookNLP:
 								raise ValueError("Token labels length must match the number of words in the sentence.")
 
 							word_to_token = list(zip(words, token_labels))
-							current_token_idx = start
+							current_token_idx = 0
 							for part in bits:
 								if part.strip() == "":
 									continue
