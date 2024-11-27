@@ -642,7 +642,10 @@ class EnglishBookNLP:
 										for part in bits:
 											words = part.split()
 											if words:
-												narration.append((header_id, header_name, words, last_end, last_end + len(words)))
+												if re.fullmatch(pattern.strip("()"), part):
+													narration.append((header_id, header_name, words, last_end, last_end + len(words)))
+												else:
+													narration.append((implicit_speaker_id, implicit_name, words, last_end, last_end + len(words)))
 												last_end += len(words)
 									else:
 										narration.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
@@ -702,7 +705,7 @@ class EnglishBookNLP:
 								role = "ns"
 							# chapter header
 							if q[0] == header_id:
-								json_output.append({"lines": lines, "t": ' '.join(q[2]), "e": ["system"], "r": role})
+								json_output.append({"t": ' '.join(q[2]), "lines": lines, "e": ["system"], "r": role})
 							else:
 								lines.append({"c": q[0], "t": ' '.join(q[2]), "e": ["system"], "r": role})
 							last_speaker = q[0]
