@@ -690,13 +690,11 @@ class EnglishBookNLP:
 										cleaned_text = cleaned_text + "\""
 									if cleaned_text.startswith("\" "):
 										cleaned_text = re.sub(r'^\"\s+', '\"', cleaned_text)
-									if cleaned_text.startswith(". "):
-										cleaned_text = cleaned_text[2:]
 								else:
 									if cleaned_text.startswith("\" "):
 										cleaned_text = cleaned_text[1:].lstrip()
-									if cleaned_text.startswith(". "):
-										cleaned_text = cleaned_text[2:]
+								if cleaned_text.startswith(". "):
+									cleaned_text = cleaned_text[2:]
 								json_output[chapter]["lines"].append({"c": q[0], "t": cleaned_text, "e": ["system"], "r": role})
 							
 							last_speaker = q[0]
