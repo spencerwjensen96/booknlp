@@ -681,6 +681,8 @@ class EnglishBookNLP:
 								json_output.append({"t": ' '.join(q[2]), "lines": lines, "e": ["system"], "r": role})
 							else:
 								cleaned_text = re.sub(r'\s+([,.!?;:])', r'\1', ' '.join(q[2]))
+								if cleaned_text == "\"":
+									continue
 								if q[0] != implicit_speaker_id:
 									if not cleaned_text.endswith("\""):
 										cleaned_text = cleaned_text + "\""
