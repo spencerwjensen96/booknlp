@@ -610,6 +610,7 @@ class EnglishBookNLP:
 					with open(join(outFolder, "%s.book.json" % (idd)), "w", encoding="utf-8") as out:
 						lastP = None
 						quotations = []
+						start_time=time.time()
 
 						# Step 1: Collect original quotations
 						for idx, (start, end) in enumerate(quotes):
@@ -648,47 +649,20 @@ class EnglishBookNLP:
 												last_end += len(words)
 									else:
 										narration.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
-							last_end = end  # Update to current end
-						# pattern = r'(\bCHAPTER\s+[IVXLCDM]+\b.)'
-						# for (id, name, sentence_tokens, start, end) in narration:
-						# 	sentence = " ".join(sentence_tokens)
-						# 	bits = re.split(pattern, sentence)
-						# 	words = sentence_tokens
-
-						# 	token_labels_idx = [x for x, _ in enumerate(range(start, end + 1))]
-
-						# 	if len(words) != len(token_labels_idx):
-						# 		print("Words: %s" % len(words))
-						# 		print("Tokens: %s" % len(token_labels_idx))
-						# 		raise ValueError("Token labels length must match the number of words in the sentence.")
-
-						# 	word_to_token = list(zip(words, token_labels_idx))
-						# 	current_token_idx = 0
-						# 	for part in bits:
-						# 		if part.strip() == "":
-						# 			continue
-						# 		part_words = part.split()
-						# 		start_token = word_to_token[current_token_idx][1]
-						# 		end_token = word_to_token[current_token_idx + len(part_words) - 1][1]
-						# 		current_token_idx += len(part_words)
-						# 		label = 'chapter' if re.fullmatch(pattern.strip("()"), part) else implicit_name
-								
-						# 		narration.append((implicit_speaker_id, label, part_words, start_token, end_token))
-
+							last_end = end
+						
 						# Handle trailing text after the last quotation
 						if last_end < len(tokens):
 							trailing_tokens = [x.text for x in tokens[last_end:]]
 							if trailing_tokens:  # Avoid adding empty text
 								narration.append((implicit_speaker_id, implicit_name, trailing_tokens, last_end, len(tokens)))
 
-						# out.write('[{"t":"' + idd + '","lines":[')
 						json_output = []
 
 						lines = []
 						last_speaker = -1
 						# Step 3: Write all quotations to the output file
 						for q in sorted(quotations + narration, key=lambda x: x[3]):  # Sort by start index
-							#TODO out.write('"%s","e": [5],"r": "n","c": %s' % (' '.join(q[2]), q[0]))
 							role = ""
 							# speaker continues
 							if q[0] == last_speaker:
@@ -706,15 +680,22 @@ class EnglishBookNLP:
 							if q[0] == header_id:
 								json_output.append({"t": ' '.join(q[2]), "lines": lines, "e": ["system"], "r": role})
 							else:
-								lines.append({"c": q[0], "t": ' '.join(q[2]), "e": ["system"], "r": role})
+								cleaned_text = re.sub(r'\s+([,.!?;:])', r'\1', ' '.join(q[2]))
+								if q[0] != implicit_speaker_id:
+									if not cleaned_text.endswith("\""):
+										cleaned_text = cleaned_text + "\""
+									lines.append({"c": q[0], "t": cleaned_text, "e": ["system"], "r": role})
+								else:
+									if cleaned_text.startswith("\""):
+										cleaned_text = cleaned_text[1:]
+									lines.append({"c": q[0], "t": cleaned_text, "e": ["system"], "r": role})
 							last_speaker = q[0]
-							# out.write("speaker_id: %s, name: %s, quote: %s, start: %s, end: %s\n" % q)
-						# out.write('],"e": [5],"r": "c"}]')
+
 						if len(json_output) == 0:
 							json_output.append({"lines": lines, "t": "book", "e": ["system"], "r": ""})
 						json.dump(json_output, out)
-				if self.literal:
-					print("--- literal: output json %.3f seconds ---" % (time.time() - originalTime))
+						print("--- literal: output json %.3f seconds ---" % (time.time() - start_time))
+
 				print("--- TOTAL (excl. startup): %.3f seconds ---, %s words" % (time.time() - originalTime, len(tokens)))
 				return time.time() - originalTime
 
