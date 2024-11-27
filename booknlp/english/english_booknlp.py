@@ -641,7 +641,7 @@ class EnglishBookNLP:
 							bits = re.split(pattern, sentence)
 							words = sentence.split()
 
-							token_labels = range(start, end)
+							token_labels = range(start, end + 1)
 
 							if len(words) != len(token_labels):
 								print("Words: %s" % words)
