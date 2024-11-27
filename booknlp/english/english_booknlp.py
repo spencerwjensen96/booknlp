@@ -658,7 +658,7 @@ class EnglishBookNLP:
 								narration.append((implicit_speaker_id, implicit_name, trailing_tokens, last_end, len(tokens)))
 
 						json_output = []
-						chapter = 0
+						chapter = -1
 						lines = []
 						last_speaker = -1
 						# Step 3: Write all quotations to the output file
