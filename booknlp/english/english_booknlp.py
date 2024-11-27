@@ -684,10 +684,12 @@ class EnglishBookNLP:
 								if q[0] != implicit_speaker_id:
 									if not cleaned_text.endswith("\""):
 										cleaned_text = cleaned_text + "\""
+									if cleaned_text.startswith("\" "):
+										cleaned_text = re.sub(r'\"\s+', '\"', cleaned_text)
 									lines.append({"c": q[0], "t": cleaned_text, "e": ["system"], "r": role})
 								else:
-									if cleaned_text.startswith("\""):
-										cleaned_text = cleaned_text[1:]
+									if cleaned_text.startswith("\" "):
+										cleaned_text = cleaned_text[1:].lstrip()
 									lines.append({"c": q[0], "t": cleaned_text, "e": ["system"], "r": role})
 							last_speaker = q[0]
 
