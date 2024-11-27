@@ -633,33 +633,41 @@ class EnglishBookNLP:
 							if start > last_end:
 								in_between_tokens = [x.text for x in tokens[last_end:start]]
 								if in_between_tokens:  # Avoid adding empty text
+									sentence = " ".join(in_between_tokens)
+									pattern = r'(\bCHAPTER\s+[IVXLCDM]+\b.)'
+									bits = re.split(pattern, sentence)
+									for part in bits:
+										words = part.split()
+										if words:
+											narration.append((implicit_speaker_id, implicit_name, words, last_end, last_end + len(words)))
+											last_end += len(words)
 									narration.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
 							last_end = end  # Update to current end
-						pattern = r'(\bCHAPTER\s+[IVXLCDM]+\b.)'
-						for (id, name, sentence_tokens, start, end) in narration:
-							sentence = " ".join(sentence_tokens)
-							bits = re.split(pattern, sentence)
-							words = sentence.split()
+						# pattern = r'(\bCHAPTER\s+[IVXLCDM]+\b.)'
+						# for (id, name, sentence_tokens, start, end) in narration:
+						# 	sentence = " ".join(sentence_tokens)
+						# 	bits = re.split(pattern, sentence)
+						# 	words = sentence_tokens
 
-							token_labels = [x for x in range(start, end + 1)]
+						# 	token_labels_idx = [x for x, _ in enumerate(range(start, end + 1))]
 
-							if len(words) != len(token_labels):
-								print("Words: %s" % len(words))
-								print("Tokens: %s" % len(token_labels))
-								raise ValueError("Token labels length must match the number of words in the sentence.")
+						# 	if len(words) != len(token_labels_idx):
+						# 		print("Words: %s" % len(words))
+						# 		print("Tokens: %s" % len(token_labels_idx))
+						# 		raise ValueError("Token labels length must match the number of words in the sentence.")
 
-							word_to_token = list(zip(words, token_labels))
-							current_token_idx = start
-							for part in bits:
-								if part.strip() == "":
-									continue
-								part_words = part.split()
-								start_token = word_to_token[current_token_idx][1]
-								end_token = word_to_token[current_token_idx + len(part_words) - 1][1]
-								current_token_idx += len(part_words)
-								label = 'chapter' if re.fullmatch(pattern.strip("()"), part) else implicit_name
+						# 	word_to_token = list(zip(words, token_labels_idx))
+						# 	current_token_idx = 0
+						# 	for part in bits:
+						# 		if part.strip() == "":
+						# 			continue
+						# 		part_words = part.split()
+						# 		start_token = word_to_token[current_token_idx][1]
+						# 		end_token = word_to_token[current_token_idx + len(part_words) - 1][1]
+						# 		current_token_idx += len(part_words)
+						# 		label = 'chapter' if re.fullmatch(pattern.strip("()"), part) else implicit_name
 								
-								narration.append((implicit_speaker_id, label, part_words, start_token, end_token))
+						# 		narration.append((implicit_speaker_id, label, part_words, start_token, end_token))
 
 						# Handle trailing text after the last quotation
 						if last_end < len(tokens):
