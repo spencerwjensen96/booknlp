@@ -13,8 +13,8 @@ class BookNLP():
 		if language == "en":
 			self.booknlp=EnglishBookNLP(model_params)
 
-	def process(self, inputFile, outputFolder, idd):
-		self.booknlp.process(inputFile, outputFolder, idd)
+	def process(self, inputFile, outputFolder, idd, regex_chapter_pattern=r'(\bCHAPTER\s+[IVXLCDM]+\b.)'):
+		self.booknlp.process(inputFile, outputFolder, idd, regex_chapter_pattern)
 
 
 def proc():
