@@ -688,12 +688,15 @@ class EnglishBookNLP:
 								if q[0] != implicit_speaker_id:
 									if not cleaned_text.endswith("\""):
 										cleaned_text = cleaned_text + "\""
-									if cleaned_text.startswith("\" ") or cleaned_text.startswith(". "):
+									if cleaned_text.startswith("\" "):
 										cleaned_text = re.sub(r'^\"\s+', '\"', cleaned_text)
-										cleaned_text = re.sub(r'^.\s+', '', cleaned_text)
+									if cleaned_text.startswith(". "):
+										cleaned_text = cleaned_text[2:]
 								else:
 									if cleaned_text.startswith("\" "):
 										cleaned_text = cleaned_text[1:].lstrip()
+									if cleaned_text.startswith(". "):
+										cleaned_text = cleaned_text[2:]
 								json_output[chapter]["lines"].append({"c": q[0], "t": cleaned_text, "e": ["system"], "r": role})
 							
 							last_speaker = q[0]
