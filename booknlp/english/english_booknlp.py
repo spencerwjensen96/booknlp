@@ -679,11 +679,11 @@ class EnglishBookNLP:
 							# chapter header
 							if q[0] == header_id:
 								if chapter == 0:
-									json_output[0] = {"t": ' '.join(q[2]), "lines": lines, "e": ["system"], "r": role}
+									json_output[0] = {"t": ' '.join(q[2]), "lines": [], "e": ["system"], "r": role}
 								else:
 									json_output.append({"t": ' '.join(q[2]), "lines": lines, "e": ["system"], "r": role})
-								chapter += 1
-								lines = []
+									chapter += 1
+									lines = []
 							else:
 								cleaned_text = re.sub(r'\s+([,.!?;:])', r'\1', ' '.join(q[2]))
 								if cleaned_text == "\"":
