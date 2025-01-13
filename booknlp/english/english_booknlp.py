@@ -657,7 +657,7 @@ class EnglishBookNLP:
 							if trailing_tokens:  # Avoid adding empty text
 								narration.append((implicit_speaker_id, implicit_name, trailing_tokens, last_end, len(tokens)))
 
-						json_output = [{}]
+						json_output = [{"t": "", "lines": [], "e": [], "r": ""}]
 						chapter = 0
 						lines = []
 						last_speaker = -1
