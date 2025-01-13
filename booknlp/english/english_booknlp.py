@@ -658,7 +658,7 @@ class EnglishBookNLP:
 								narration.append((implicit_speaker_id, implicit_name, trailing_tokens, last_end, len(tokens)))
 
 						json_output = []
-						chapter = -1
+						chapter = 0
 						lines = []
 						last_speaker = -1
 						# Step 3: Write all quotations to the output file
@@ -677,7 +677,7 @@ class EnglishBookNLP:
 							elif q[0] == implicit_speaker_id and q[0] == last_speaker:
 								role = "ns"
 							# chapter header
-							if q[0] == header_id:
+							if q[0] == header_id and chapter != 0:
 								json_output.append({"t": ' '.join(q[2]), "lines": lines, "e": ["system"], "r": role})
 								chapter += 1
 								lines = []
