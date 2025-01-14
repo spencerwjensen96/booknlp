@@ -663,6 +663,8 @@ class EnglishBookNLP:
 						last_speaker = -1
 						# Step 3: Write all quotations to the output file
 						for q in sorted(quotations + narration, key=lambda x: x[3]):  # Sort by start index
+							print(q)
+							
 							role = ""
 							# speaker continues
 							if q[0] == last_speaker:
