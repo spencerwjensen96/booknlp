@@ -637,7 +637,9 @@ class EnglishBookNLP:
 								in_between_tokens = [x.text for x in tokens[last_end:start]]
 								if in_between_tokens:  # Avoid adding empty text
 									sentence = " ".join(in_between_tokens)
+									print(sentence)
 									bits = [x for x in re.split(regex_chapter_pattern, sentence) if x != '']
+									print(bits)
 									if len(bits) > 1:
 										for part in bits:
 											words = part.split()
@@ -661,6 +663,7 @@ class EnglishBookNLP:
 						chapter = -1
 						lines = []
 						last_speaker = -1
+						print("OUTPUT")
 						# Step 3: Write all quotations to the output file
 						for q in sorted(quotations + narration, key=lambda x: x[3]):  # Sort by start index
 							print(q)
