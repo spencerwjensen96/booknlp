@@ -625,8 +625,8 @@ class EnglishBookNLP:
 							quotations.append((speaker_id, name, quote_, start, end))
 						
 						# Step 2: Add in-between text as implicit quotations
-						implicit_speaker_id = "implicit"
-						implicit_name = "narration"
+						implicit_speaker_id = -1
+						implicit_name = "narrator"
 						header_id = "header"
 						header_name = "chapter"
 						last_end = 0  # Initialize to the start of the document
@@ -637,14 +637,12 @@ class EnglishBookNLP:
 								in_between_tokens = [x.text for x in tokens[last_end:start]]
 								if in_between_tokens:  # Avoid adding empty text
 									sentence = " ".join(in_between_tokens)
-									print(sentence)
 									bits = [x for x in re.split(regex_chapter_pattern, sentence) if x != '']
-									print(bits)
 									if len(bits) > 1:
 										for part in bits:
 											words = part.split()
 											if words:
-												if re.fullmatch(regex_chapter_pattern.strip("()"), part):
+												if re.search(regex_chapter_pattern.strip("()"), part):
 													narration.append((header_id, header_name, words, last_end, last_end + len(words)))
 												else:
 													narration.append((implicit_speaker_id, implicit_name, words, last_end, last_end + len(words)))
@@ -663,10 +661,8 @@ class EnglishBookNLP:
 						chapter = -1
 						lines = []
 						last_speaker = -1
-						print("OUTPUT")
 						# Step 3: Write all quotations to the output file
 						for q in sorted(quotations + narration, key=lambda x: x[3]):  # Sort by start index
-							print(q)
 							
 							role = ""
 							# speaker continues
