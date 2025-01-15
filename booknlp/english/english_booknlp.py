@@ -679,7 +679,7 @@ class EnglishBookNLP:
 								role = "ns"
 							# chapter header
 							if q[0] == header_id:
-								json_output.append({"t": ' '.join(q[2]), "lines": lines, "e": ["system"], "r": role})
+								json_output.append({"t": ' '.join(q[2])strip('# '), "lines": lines, "e": ["system"], "r": role})
 								chapter += 1
 								lines = []
 							else:
@@ -702,7 +702,8 @@ class EnglishBookNLP:
 
 						if len(json_output) == 0:
 							json_output.append({"lines": lines, "t": "book", "e": ["system"], "r": ""})
-						json.dump(json_output, out)
+						with(out, 'w', encoding='utf-8') as f:
+							json.dump(json_output, f)
 						print("--- literal: output json %.3f seconds ---" % (time.time() - start_time))
 
 				print("--- TOTAL (excl. startup): %.3f seconds ---, %s words" % (time.time() - originalTime, len(tokens)))
