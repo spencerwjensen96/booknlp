@@ -642,7 +642,6 @@ class EnglishBookNLP:
 										for part in bits:
 											words = part.split()
 											if words:
-												print(part)
 												if re.search(regex_chapter_pattern.strip("()"), part):
 													narration.append((header_id, header_name, words, last_end, last_end + len(words)))
 												else:
