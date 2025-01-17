@@ -637,6 +637,8 @@ class EnglishBookNLP:
 								in_between_tokens = [x.text for x in tokens[last_end:start]]
 								if in_between_tokens:  # Avoid adding empty text
 									sentence = " ".join(in_between_tokens)
+									if not re.search(r'\w', sentence):
+										continue
 									bits = [x for x in re.split(regex_chapter_pattern, sentence) if x != '']
 									if len(bits) > 1:
 										for part in bits:
