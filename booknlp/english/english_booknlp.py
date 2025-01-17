@@ -703,7 +703,9 @@ class EnglishBookNLP:
 						if len(json_output) == 0:
 							json_output.append({"lines": lines, "t": "book", "e": ["system"], "r": ""})
 
-						json.dump(json_output, out)
+						# json.dump(json_output, out)
+						with open(out.path, 'w', encoding='utf-8') as output_file:
+							json.dump(json_ouput, output_file, ensure_ascii=False)
 						print("--- literal: output json %.3f seconds ---" % (time.time() - start_time))
 
 				print("--- TOTAL (excl. startup): %.3f seconds ---, %s words" % (time.time() - originalTime, len(tokens)))
