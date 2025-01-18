@@ -41,7 +41,7 @@ class BERTSpeakerID(nn.Module):
 
 		self.tokenizer = BertTokenizer.from_pretrained(modelName, do_lower_case=False, do_basic_tokenize=False)
 		self.tokenizer.add_tokens(["[QUOTE]", "[ALTQUOTE]", "[PAR]", "[CAP]"], special_tokens=True)
-		self.bert = BertModel.from_pretrained(modelName)
+		self.bert = BertModel.from_pretrained(modelName).to(device)
 		self.bert.resize_token_embeddings(len(self.tokenizer))
 			
 		self.tanh = nn.Tanh()
