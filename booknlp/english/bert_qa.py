@@ -7,11 +7,11 @@ import sys
 PINK = '\033[95m'
 ENDC = '\033[0m'
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 class QuotationAttribution:
 
 	def __init__(self, modelFile):
-
-		device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 		base_model=re.sub("google_bert", "google/bert", modelFile.split("/")[-1])
 		base_model=re.sub(".model", "", base_model)
@@ -49,7 +49,7 @@ class QuotationAttribution:
 		prediction_id=0
 
 		for x1, m1, y1, o1 in zip(x_batches, m_batches, y_batches, o_batches):
-			y_pred = self.model.forward(x1, m1)
+			y_pred = self.model.forward(x1.to(device), m1.to(device))
 			orig, meta=o1
 			predictions=torch.argmax(y_pred, axis=1).detach().cpu().numpy()
 			for idx, pred in enumerate(predictions):
