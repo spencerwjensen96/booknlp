@@ -625,8 +625,8 @@ class EnglishBookNLP:
 							quotations.append((speaker_id, name, quote_, start, end))
 						
 						# Step 2: Add in-between text as implicit quotations
-						implicit_speaker_id = -1
-						implicit_name = "narrator"
+						narrator_id = -1
+						narrator_name = "narrator"
 						header_id = "header"
 						header_name = "chapter"
 						last_end = 0  # Initialize to the start of the document
@@ -647,17 +647,17 @@ class EnglishBookNLP:
 												if re.search(regex_chapter_pattern.strip("()"), part):
 													narration.append((header_id, header_name, words, last_end, last_end + len(words)))
 												else:
-													narration.append((implicit_speaker_id, implicit_name, words, last_end, last_end + len(words)))
+													narration.append((narrator_id, narrator_name, words, last_end, last_end + len(words)))
 												last_end += len(words)
 									else:
-										narration.append((implicit_speaker_id, implicit_name, in_between_tokens, last_end, start))
+										narration.append((narrator_id, narrator_name, in_between_tokens, last_end, start))
 							last_end = end
 						
 						# Handle trailing text after the last quotation
 						if last_end < len(tokens):
 							trailing_tokens = [x.text for x in tokens[last_end:]]
 							if trailing_tokens:  # Avoid adding empty text
-								narration.append((implicit_speaker_id, implicit_name, trailing_tokens, last_end, len(tokens)))
+								narration.append((narrator_id, narrator_name, trailing_tokens, last_end, len(tokens)))
 
 						json_output = []
 						chapter = -1
@@ -671,13 +671,13 @@ class EnglishBookNLP:
 							if q[0] == last_speaker:
 								role = "sc"
 							# new speaker
-							elif q[0] != last_speaker and q[0] != implicit_speaker_id:
+							elif q[0] != last_speaker and q[0] != narrator_id:
 								role = "s"
 							# narrator starts
-							elif q[0] == implicit_speaker_id and q[0] != last_speaker:
+							elif q[0] == narrator_id and q[0] != last_speaker:
 								role = "n"
 							# narrator continues
-							elif q[0] == implicit_speaker_id and q[0] == last_speaker:
+							elif q[0] == narrator_id and q[0] == last_speaker:
 								role = "ns"
 							# chapter header
 							if q[0] == header_id:
@@ -686,18 +686,19 @@ class EnglishBookNLP:
 								lines = []
 							else:
 								cleaned_text = re.sub(r'\s+([,.!?;:])', r'\1', ' '.join(q[2]))
-								if cleaned_text == "\"":
+								if not any(c.isalpha() for c in cleaned_text) and '...' not in cleaned_text and '-' not in cleaned_text and '—' not in cleaned_text:
 									continue
-								if q[0] != implicit_speaker_id:
-									if not cleaned_text.endswith("\""):
-										cleaned_text = cleaned_text + "\""
-									if cleaned_text.startswith("\" "):
-										cleaned_text = re.sub(r'^\"\s+', '\"', cleaned_text)
+								if q[0] != narrator_id:
+									if not cleaned_text.endswith(r'\"'):
+										cleaned_text = cleaned_text + r'\"'
+									if cleaned_text.startswith(r'\"') or cleaned_text.startswith('“'):
+										cleaned_text = re.sub(r'^[^\w]+', r'\"', cleaned_text)
 								else:
-									if cleaned_text.startswith("\" "):
-										cleaned_text = cleaned_text[1:].lstrip()
-								if cleaned_text.startswith(". "):
-									cleaned_text = cleaned_text[2:]
+									if cleaned_text.startswith(r'\"'):
+										cleaned_text = re.sub(r'^[^\w]+', r'', cleaned_text)
+
+								cleaned_text = re.sub(r'^[^\w\d]+', '', text)
+
 								json_output[chapter]["lines"].append({"c": q[0], "t": cleaned_text, "e": ["system"], "r": role})
 							
 							last_speaker = q[0]
@@ -705,6 +706,16 @@ class EnglishBookNLP:
 						if len(json_output) == 0:
 							json_output.append({"lines": lines, "t": "book", "e": ["system"], "r": ""})
 
+						def clean_dict(d):
+							if isinstance(d, dict):
+								return {k: clean_dict(v) for k, v in d.items()}
+							elif isinstance(d, list):
+								return [clean_dict(v) for v in v]
+							elif isinstance(d, str):
+								return d.encode('ascii', 'ignore').decode('ascii')
+							return d
+
+						json_output = clean_dict(json_output)
 						# json.dump(json_output, out)
 						with open(out.name, 'w', encoding='utf-8') as output_file:
 							json.dump(json_output, output_file, ensure_ascii=False)
