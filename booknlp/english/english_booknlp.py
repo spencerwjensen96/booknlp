@@ -689,7 +689,7 @@ class EnglishBookNLP:
 								if not any(c.isalpha() for c in cleaned_text) and '...' not in cleaned_text and '-' not in cleaned_text and '—' not in cleaned_text:
 									continue
 
-								cleaned_text = cleaned_text.replace( r'^[“"”]?(.*)[“"”]?$', '$1');
+								cleaned_text = cleaned_text.sub( r'^[“"”]?(.*)[“"”]?$', r'\1');
 
 								def fix_apostrophes(text):
 									# First pattern: handle regular possessives and contractions (like "Sam's" or "don't")
