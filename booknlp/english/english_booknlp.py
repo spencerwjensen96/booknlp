@@ -706,16 +706,16 @@ class EnglishBookNLP:
 						if len(json_output) == 0:
 							json_output.append({"lines": lines, "t": "book", "e": ["system"], "r": ""})
 
-						def clean_dict(d):
-							if isinstance(d, dict):
-								return {k: clean_dict(v) for k, v in d.items()}
-							elif isinstance(d, list):
-								return [clean_dict(v) for v in d]
-							elif isinstance(d, str):
-								return d.encode('ascii', 'ignore').decode('ascii')
-							return d
-
-						json_output = clean_dict(json_output)
+						# def clean_dict(d):
+						# 	if isinstance(d, dict):
+						# 		return {k: clean_dict(v) for k, v in d.items()}
+						# 	elif isinstance(d, list):
+						# 		return [clean_dict(v) for v in d]
+						# 	elif isinstance(d, str):
+						# 		return d.encode('ascii', 'ignore').decode('ascii')
+						# 	return d
+						#
+						# json_output = clean_dict(json_output)
 						# json.dump(json_output, out)
 						with open(out.name, 'w', encoding='utf-8') as output_file:
 							json.dump(json_output, output_file, ensure_ascii=False)
