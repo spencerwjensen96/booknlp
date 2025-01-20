@@ -689,7 +689,7 @@ class EnglishBookNLP:
 								if not any(c.isalpha() for c in cleaned_text) and '...' not in cleaned_text and '-' not in cleaned_text and '—' not in cleaned_text:
 									continue
 
-								cleaned_text = re.sub( r'^[“"”]?(.*)[“"”]?$', r'\1', cleaned_text);
+								cleaned_text = re.sub( r'^[“"”]?(.[^“"”\n]*)[“"”]?$', r'\1', cleaned_text);
 
 								def fix_apostrophes(text):
 									text = re.sub(r'(\w+)\s’s', r"\1's ", text)
