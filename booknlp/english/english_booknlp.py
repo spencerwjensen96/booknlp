@@ -703,6 +703,7 @@ class EnglishBookNLP:
 									return text.strip()
 
 								cleaned_text = fix_apostrophes(cleaned_text)
+								cleaned_text = re.sub(r'�', '', cleaned_text)
 								# if q[0] != narrator_id:
 								# 	if not cleaned_text.endswith(r'\"'):
 								# 		cleaned_text = cleaned_text + r'\"'
