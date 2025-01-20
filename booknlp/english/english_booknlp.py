@@ -688,14 +688,14 @@ class EnglishBookNLP:
 								cleaned_text = re.sub(r'\s+([,.!?;:])', r'\1', ' '.join(q[2]))
 								if not any(c.isalpha() for c in cleaned_text) and '...' not in cleaned_text and '-' not in cleaned_text and '—' not in cleaned_text:
 									continue
-								if q[0] != narrator_id:
-									if not cleaned_text.endswith(r'\"'):
-										cleaned_text = cleaned_text + r'\"'
-									if cleaned_text.startswith(r'\"') or cleaned_text.startswith('“'):
-										cleaned_text = re.sub(r'^[^\w]+', r'\"', cleaned_text)
-								else:
-									if cleaned_text.startswith(r'\"'):
-										cleaned_text = re.sub(r'^[^\w]+', r'', cleaned_text)
+								# if q[0] != narrator_id:
+								# 	if not cleaned_text.endswith(r'\"'):
+								# 		cleaned_text = cleaned_text + r'\"'
+								# 	if cleaned_text.startswith(r'\"') or cleaned_text.startswith('“'):
+								# 		cleaned_text = re.sub(r'^[^\w]+', r'\"', cleaned_text)
+								# else:
+								# 	if cleaned_text.startswith(r'\"'):
+								# 		cleaned_text = re.sub(r'^[^\w]+', r'', cleaned_text)
 
 								# cleaned_text = re.sub(r'^[^\w\d]+', '', text)
 
