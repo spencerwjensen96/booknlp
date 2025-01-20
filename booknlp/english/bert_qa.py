@@ -49,7 +49,9 @@ class QuotationAttribution:
 		prediction_id=0
 
 		for x1, m1, y1, o1 in zip(x_batches, m_batches, y_batches, o_batches):
-			y_pred = self.model.forward(x1.to(device), m1.to(device))
+			x1 = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in x1.items()}
+			m1 = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in m1.items()}
+			y_pred = self.model.forward(x1, m1)
 			orig, meta=o1
 			predictions=torch.argmax(y_pred, axis=1).detach().cpu().numpy()
 			for idx, pred in enumerate(predictions):
