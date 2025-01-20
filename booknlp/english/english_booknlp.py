@@ -697,7 +697,7 @@ class EnglishBookNLP:
 									if cleaned_text.startswith(r'\"'):
 										cleaned_text = re.sub(r'^[^\w]+', r'', cleaned_text)
 
-								cleaned_text = re.sub(r'^[^\w\d]+', '', text)
+								# cleaned_text = re.sub(r'^[^\w\d]+', '', text)
 
 								json_output[chapter]["lines"].append({"c": q[0], "t": cleaned_text, "e": ["system"], "r": role})
 							
