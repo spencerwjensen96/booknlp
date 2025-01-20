@@ -692,11 +692,9 @@ class EnglishBookNLP:
 								cleaned_text = re.sub( r'^[“"”]?(.*)[“"”]?$', r'\1', cleaned_text);
 
 								def fix_apostrophes(text):
-									# First pattern: handle regular possessives and contractions (like "Sam's" or "don't")
 									text = re.sub(r'(\w+)\s’s', r"\1's ", text)
 									text = re.sub(r'(\w+)\s\'s', r"\1's ", text)
 
-									# Second pattern: handle plural possessives (like "parents'")
 									text = re.sub(r'(\w+)\s(’)\s', r"\1' ", text)
 									text = re.sub(r'(\w+)\s(\')\s', r"\1' ", text)
 
@@ -704,16 +702,6 @@ class EnglishBookNLP:
 
 								cleaned_text = fix_apostrophes(cleaned_text)
 								cleaned_text = re.sub(r'�', '', cleaned_text)
-								# if q[0] != narrator_id:
-								# 	if not cleaned_text.endswith(r'\"'):
-								# 		cleaned_text = cleaned_text + r'\"'
-								# 	if cleaned_text.startswith(r'\"') or cleaned_text.startswith('“'):
-								# 		cleaned_text = re.sub(r'^[^\w]+', r'\"', cleaned_text)
-								# else:
-								# 	if cleaned_text.startswith(r'\"'):
-								# 		cleaned_text = re.sub(r'^[^\w]+', r'', cleaned_text)
-
-								# cleaned_text = re.sub(r'^[^\w\d]+', '', text)
 
 								json_output[chapter]["lines"].append({"c": q[0], "t": cleaned_text, "e": ["system"], "r": role})
 							
@@ -722,17 +710,6 @@ class EnglishBookNLP:
 						if len(json_output) == 0:
 							json_output.append({"lines": lines, "t": "book", "e": ["system"], "r": ""})
 
-						# def clean_dict(d):
-						# 	if isinstance(d, dict):
-						# 		return {k: clean_dict(v) for k, v in d.items()}
-						# 	elif isinstance(d, list):
-						# 		return [clean_dict(v) for v in d]
-						# 	elif isinstance(d, str):
-						# 		return d.encode('ascii', 'ignore').decode('ascii')
-						# 	return d
-						#
-						# json_output = clean_dict(json_output)
-						# json.dump(json_output, out)
 						with open(out.name, 'w', encoding='utf-8') as output_file:
 							json.dump(json_output, output_file, ensure_ascii=False)
 						print("--- literal: output json %.3f seconds ---" % (time.time() - start_time))
