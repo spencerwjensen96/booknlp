@@ -710,7 +710,7 @@ class EnglishBookNLP:
 							if isinstance(d, dict):
 								return {k: clean_dict(v) for k, v in d.items()}
 							elif isinstance(d, list):
-								return [clean_dict(v) for v in v]
+								return [clean_dict(v) for v in d]
 							elif isinstance(d, str):
 								return d.encode('ascii', 'ignore').decode('ascii')
 							return d
