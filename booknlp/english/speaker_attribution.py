@@ -172,7 +172,9 @@ class BERTSpeakerID(nn.Module):
 	def forward(self, batch_x, batch_m):
 		batch_x["toks"] = batch_x["toks"].to(device)
 		batch_x["mask"] = batch_x["mask"].to(device)
-
+		print(f"toks device: {batch_x['toks'].device}")
+		print(f"mask device: {batch_x['mask'].device}")
+		print(f"BERT model device: {self.bert.device}")
 		_, pooled_outputs, sequence_outputs = self.bert(batch_x["toks"], token_type_ids=None, attention_mask=batch_x["mask"], output_hidden_states=True, return_dict=False)
 
 		out=sequence_outputs[-1]
