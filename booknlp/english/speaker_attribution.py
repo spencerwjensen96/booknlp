@@ -10,6 +10,7 @@ import numpy as np
 import argparse
 import json
 from booknlp.common.b3 import b3
+from settings import build_device
 
 from collections import Counter
 
@@ -17,7 +18,7 @@ PINK = '\033[95m'
 ENDC = '\033[0m'
 
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device("cuda")
+device = torch.device(build_device)
 
 class BERTSpeakerID(nn.Module):
 
@@ -170,9 +171,9 @@ class BERTSpeakerID(nn.Module):
 	
 
 	def forward(self, batch_x, batch_m):
-		batch_x["toks"] = batch_x["toks"].to(device)
-		batch_x["mask"] = batch_x["mask"].to(device)
-		self.bert = self.bert.to(device)
+		# batch_x["toks"] = batch_x["toks"].to(device)
+		# batch_x["mask"] = batch_x["mask"].to(device)
+		# self.bert = self.bert.to(device)
 
 		_, pooled_outputs, sequence_outputs = self.bert(batch_x["toks"], token_type_ids=None, attention_mask=batch_x["mask"], output_hidden_states=True, return_dict=False)
 
@@ -184,10 +185,10 @@ class BERTSpeakerID(nn.Module):
 		
 		combined=torch.cat((combined_cands, combined_quote), axis=2)
 
-		combined = combined.to(device)
-		self.fc = self.fc.to(device)
-		self.tanh = self.tanh.to(device)
-		self.fc2 = self.fc2.to(device)
+		# combined = combined.to(device)
+		# self.fc = self.fc.to(device)
+		# self.tanh = self.tanh.to(device)
+		# self.fc2 = self.fc2.to(device)
 
 		preds = self.fc(combined)
 		preds=self.tanh(preds)

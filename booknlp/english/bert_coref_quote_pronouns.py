@@ -18,6 +18,7 @@ from booknlp.english.litbank_quote import QuoteTagger
 from booknlp.english.name_coref import NameCoref
 
 from booknlp.english.bert_qa import QuotationAttribution
+from settings import build_device
 
 random.seed(1)
 np.random.seed(1)
@@ -26,7 +27,7 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device("cuda")
+device = torch.device(build_device)
 print("using device", device)
 
 

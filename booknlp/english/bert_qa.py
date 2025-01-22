@@ -3,12 +3,13 @@ import re
 from booknlp.english.speaker_attribution import BERTSpeakerID
 import numpy as np
 import sys
+from settings import build_device
 
 PINK = '\033[95m'
 ENDC = '\033[0m'
 
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device("cuda")
+device = torch.device(build_device)
 class QuotationAttribution:
 
 	def __init__(self, modelFile):
@@ -49,8 +50,8 @@ class QuotationAttribution:
 		prediction_id=0
 
 		for x1, m1, y1, o1 in zip(x_batches, m_batches, y_batches, o_batches):
-			x1 = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in x1.items()}
-			m1 = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in m1.items()}
+			# x1 = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in x1.items()}
+			# m1 = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in m1.items()}
 			y_pred = self.model.forward(x1, m1)
 			orig, meta=o1
 			predictions=torch.argmax(y_pred, axis=1).detach().cpu().numpy()
