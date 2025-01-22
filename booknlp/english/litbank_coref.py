@@ -6,6 +6,8 @@ from booknlp.common.pipelines import Entity
 from booknlp.english.name_coref import NameCoref
 import pkg_resources
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 class LitBankCoref:
 
 	def __init__(self, modelFile, gender_cats, pronominalCorefOnly=True):
@@ -43,7 +45,9 @@ class LitBankCoref:
 						ent.quote_mention=attributed_quotations[idx]
 
 		test_matrix, test_index, test_token_positions, test_ent_spans, test_starts, test_ends, test_widths, test_data, test_masks, test_transforms, test_quotes=self.model.get_data(test_doc, test_ents, max_ents, max_words)
-		
+
+		self.model = self.model.to(device)
+		print(f"Model device: {self.model.device}")
 		assignments=self.model.forward(test_matrix, test_index, existing=refs, token_positions=test_token_positions, starts=test_starts, ends=test_ends, widths=test_widths, input_ids=test_data, attention_mask=test_masks, transforms=test_transforms, ref_genders=ref_gender, entities=global_entities)
 		
 		aliasFile = pkg_resources.resource_filename(__name__, "data/aliases.txt")
