@@ -7,8 +7,8 @@ import sys
 PINK = '\033[95m'
 ENDC = '\033[0m'
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda")
 class QuotationAttribution:
 
 	def __init__(self, modelFile):

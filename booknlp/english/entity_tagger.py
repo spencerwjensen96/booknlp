@@ -8,7 +8,8 @@ import pkg_resources
 class LitBankEntityTagger:
 	def __init__(self, model_file, model_tagset):
 
-		device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+		# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+		device = torch.device("cuda")
 		self.tagset=sequence_layered_reader.read_tagset(model_tagset)
 		supersenseTagset = pkg_resources.resource_filename(__name__, "data/supersense.tagset")
 

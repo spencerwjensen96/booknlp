@@ -6,8 +6,8 @@ from booknlp.common.pipelines import Entity
 from booknlp.english.name_coref import NameCoref
 import pkg_resources
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda")
 class LitBankCoref:
 
 	def __init__(self, modelFile, gender_cats, pronominalCorefOnly=True):
@@ -45,6 +45,9 @@ class LitBankCoref:
 						ent.quote_mention=attributed_quotations[idx]
 
 		test_matrix, test_index, test_token_positions, test_ent_spans, test_starts, test_ends, test_widths, test_data, test_masks, test_transforms, test_quotes=self.model.get_data(test_doc, test_ents, max_ents, max_words)
+
+		test_matrix = test_matrix.to(device)
+		test_index = test_index.to(device)
 
 		self.model = self.model.to(device)
 		print(f"Model device: {self.model.device}")
