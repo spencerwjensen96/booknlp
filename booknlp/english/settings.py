@@ -1,1 +1,2 @@
-build_device = "cuda"
+def build_device():
+    return 'cuda'
