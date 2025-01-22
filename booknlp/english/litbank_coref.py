@@ -5,9 +5,9 @@ import numpy as np
 from booknlp.common.pipelines import Entity
 from booknlp.english.name_coref import NameCoref
 import pkg_resources
-from settings import build_device
+from booknlp.english.settings import DEVICE
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device(build_device)
+device = torch.device(DEVICE)
 class LitBankCoref:
 
 	def __init__(self, modelFile, gender_cats, pronominalCorefOnly=True):

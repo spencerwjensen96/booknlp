@@ -10,7 +10,7 @@ import numpy as np
 import argparse
 import json
 from booknlp.common.b3 import b3
-from settings import build_device
+from booknlp.english.settings import DEVICE
 
 from collections import Counter
 
@@ -18,7 +18,7 @@ PINK = '\033[95m'
 ENDC = '\033[0m'
 
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device(build_device)
+device = torch.device(DEVICE)
 
 class BERTSpeakerID(nn.Module):
 

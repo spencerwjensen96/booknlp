@@ -3,13 +3,13 @@ import re
 from booknlp.english.speaker_attribution import BERTSpeakerID
 import numpy as np
 import sys
-from settings import build_device
+from booknlp.english.settings import DEVICE
 
 PINK = '\033[95m'
 ENDC = '\033[0m'
 
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device(build_device)
+device = torch.device(DEVICE)
 class QuotationAttribution:
 
 	def __init__(self, modelFile):
