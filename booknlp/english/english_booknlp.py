@@ -702,7 +702,8 @@ class EnglishBookNLP:
 
 								cleaned_text = fix_apostrophes(cleaned_text)
 								cleaned_text = cleaned_text.replace('�', '')
-
+								print(q)
+								print(cleaned_text)
 								json_output[chapter]["lines"].append({"c": q[0], "t": cleaned_text, "e": ["system"], "r": role})
 							
 							last_speaker = q[0]
