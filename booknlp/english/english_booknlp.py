@@ -681,7 +681,7 @@ class EnglishBookNLP:
 								role = "ns"
 							# chapter header
 							if q[0] == header_id:
-								json_output.append({"t": ' '.join(q[2]).strip('# '), "lines": lines, "e": ["system"], "r": role})
+								json_output.append({"t": ' '.join(q[2]).strip('# '), "lines": lines, "e": ["system"], "r": "c"})
 								chapter += 1
 								lines = []
 							else:
