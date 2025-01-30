@@ -334,7 +334,7 @@ class EnglishBookNLP:
 	def print_json_book(self, character_info):
 		print(json.dumps(character_info, indent=4))
 
-	def process(self, filename, outFolder, idd, regex_chapter_pattern=r'(#[\w\s]+#)'):		
+	def process(self, filename, outFolder, idd, regex_chapter_pattern):		
 
 		with torch.no_grad():
 
