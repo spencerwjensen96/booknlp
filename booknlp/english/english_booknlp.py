@@ -701,14 +701,14 @@ class EnglishBookNLP:
 									return text.strip()
 
 								def split_sentences(text):
-									abbr = r'(?<!Mr)(?<!Mrs)(?<!Dr)(?<!Ms)(?<!St)(?<!Prof)(?<!Sr)(?<!Jr)(?<!vs)(?<!etc)(?<!Vol)'
+									abbr = r'(?<![Mm][Rr])(?<![Mm][Rr][Ss])(?<![Dd][Rr])(?<![Mm][Ss])(?<![Ss][Tt])(?<![Pp][Rr][Oo][Ff])(?<![Ss][Rr])(?<![Jj][Rr])(?<![Vv][Ss])(?<![Ee][Tt][Cc])(?<![Vv][Oo][Ll])'
 									sentence_splitter_pattern = rf'{abbr}[.!?]["”]*(?=\s*[A-Z]*|$)'
 									sentences_split = re.split(sentence_splitter_pattern, text)
 									return [s.strip() for s in sentences_split if s.strip()]
 
 								cleaned_text = fix_apostrophes(cleaned_text)
 								cleaned_text = cleaned_text.replace('�', '')
-								cleaned_text = cleaned_text.replace(" ", " ") # non breaking spaces break the system
+								cleaned_text = re.sub(r'\s+', ' ', cleaned_text) # non breaking spaces break the system
 								cleaned_text = re.sub(r'[(]\s+([^)]*)\s+[)]', r'(\1)', cleaned_text)
 
 								for i, sent in enumerate(split_sentences(cleaned_text)):
