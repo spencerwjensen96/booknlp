@@ -663,9 +663,12 @@ class EnglishBookNLP:
 						chapter = -1
 						lines = []
 						last_speaker = -1
+						last_token = -1
 						# Step 3: Write all quotations to the output file
 						for q in sorted(quotations + narration, key=lambda x: x[3]):  # Sort by start index
-							
+							if last_token < q[3]:
+								print("duplicate line")
+								continue
 							role = ""
 							# speaker continues
 							if q[0] == last_speaker:
@@ -682,14 +685,15 @@ class EnglishBookNLP:
 							# chapter header
 							if q[0] == header_id:
 								json_output.append({"t": ' '.join(q[2]).strip('# '), "lines": lines, "e": ["system"], "r": "c"})
+								last_token = q[4]
 								chapter += 1
 								lines = []
 							else:
-								cleaned_text = re.sub(r'\s+([,.!?;:])', r'\1', ' '.join(q[2]))
+								cleaned_text = re.sub(r'\s+([,.!?;:])', r'\1', ' '.join(q[2])) #fix puncuation tokenization
 								if not any(c.isalpha() for c in cleaned_text) and '...' not in cleaned_text and '-' not in cleaned_text and '—' not in cleaned_text:
 									continue
 
-								cleaned_text = re.sub( r'^[“"”]?(.[^“"”\n]*)[“"”]?$', r'\1', cleaned_text);
+								cleaned_text = re.sub( '^[“"”\s]*(.[^“"”\n]*)[“"”\s]*$', r'\1', cleaned_text);
 								cleaned_text = re.sub( r"’", r"'", cleaned_text)
 
 								def fix_apostrophes(text):
@@ -713,15 +717,12 @@ class EnglishBookNLP:
 								cleaned_text = re.sub(r'[\(]\s+([^)]*)\s+[\)]', r'\(\1\)', cleaned_text)
 
 								for i, sent in enumerate(split_sentences(cleaned_text)):
-									print(sent)
-									print(cleaned_text)
 									match = re.search(sent, cleaned_text)
 									if i != 0:
 										if role.startswith('n'):
 											role = 'nc'
 										elif role.startswith('s'):
 											role = 'sc'
-									print(match)
 									if not match:
 										t = sent
 									else:
@@ -730,6 +731,7 @@ class EnglishBookNLP:
 											t = f'"{cleaned_text[match.start():match.end()+1]}"'
 
 									json_output[chapter]["lines"].append({"c": q[0], "t": t, "e": ["system"], "r": role})
+									last_token = q[4]
 							
 							last_speaker = q[0]
 
