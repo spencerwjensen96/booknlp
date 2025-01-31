@@ -710,9 +710,11 @@ class EnglishBookNLP:
 								cleaned_text = fix_apostrophes(cleaned_text)
 								cleaned_text = cleaned_text.replace('�', '')
 								cleaned_text = re.sub(r'\s+', ' ', cleaned_text) # non breaking spaces break the system
-								cleaned_text = re.sub(r'[(]\s+([^)]*)\s+[)]', r'(\1)', cleaned_text)
+								cleaned_text = re.sub(r'[\(]\s+([^)]*)\s+[\)]', r'\(\1\)', cleaned_text)
 
 								for i, sent in enumerate(split_sentences(cleaned_text)):
+									print(sent)
+									print(cleaned_text)
 									match = re.search(sent, cleaned_text)
 									if i != 0:
 										if role.startswith('n'):
@@ -720,8 +722,6 @@ class EnglishBookNLP:
 										elif role.startswith('s'):
 											role = 'sc'
 									print(match)
-									print(sent)
-									print(cleaned_text)
 									if not match:
 										t = sent
 									else:
