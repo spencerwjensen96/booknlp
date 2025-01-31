@@ -334,7 +334,7 @@ class EnglishBookNLP:
 	def print_json_book(self, character_info):
 		print(json.dumps(character_info, indent=4))
 
-	def process(self, filename, outFolder, idd, regex_chapter_pattern):		
+	def process(self, filename, outFolder, idd, regex_chapter_pattern):
 
 		with torch.no_grad():
 
@@ -700,10 +700,27 @@ class EnglishBookNLP:
 
 									return text.strip()
 
+								def split_sentences(text):
+									abbr = r'(?<!Mr)(?<!Mrs)(?<!Dr)(?<!Ms)(?<!St)(?<!Prof)(?<!Sr)(?<!Jr)(?<!vs)(?<!etc)(?<!Vol)'
+									sentence_splitter_pattern = rf'{abbr}(?<=[.!?]["”]*)(?=\s*[A-Z]*|$)'
+									sentences_split = re.split(sentence_splitter_pattern, text)
+									return [s.strip() for s in sentences_split if s.strip()]
+
 								cleaned_text = fix_apostrophes(cleaned_text)
 								cleaned_text = cleaned_text.replace('�', '')
-								
-								json_output[chapter]["lines"].append({"c": q[0], "t": cleaned_text, "e": ["system"], "r": role})
+
+								for i, sent in enumerate(split_sentences(cleaned_text)):
+									match = re.search(sent, cleaned_text)
+									if i != 0:
+										if role.startswith('n'):
+											role = 'nc'
+										elif role.startswith('s'):
+											role = 'sc'
+									t = cleaned_text[match.start():match.end() + 1]
+									if role.startswith('s'):
+										t = f'"{cleaned_text[match.start():match.end() + 1]}"'
+
+									json_output[chapter]["lines"].append({"c": q[0], "t": t, "e": ["system"], "r": role})
 							
 							last_speaker = q[0]
 
