@@ -708,7 +708,7 @@ class EnglishBookNLP:
 
 								cleaned_text = fix_apostrophes(cleaned_text)
 								cleaned_text = cleaned_text.replace('�', '')
-								cleaned_text = re.sub(r'[(]\s+([^)]*)\s+[)]', r'(\1)')
+								cleaned_text = re.sub(r'[(]\s+([^)]*)\s+[)]', r'(\1)', cleaned_text)
 
 								for i, sent in enumerate(split_sentences(cleaned_text)):
 									match = re.search(sent, cleaned_text)
