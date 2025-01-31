@@ -702,7 +702,7 @@ class EnglishBookNLP:
 
 								def split_sentences(text):
 									abbr = r'(?<!Mr)(?<!Mrs)(?<!Dr)(?<!Ms)(?<!St)(?<!Prof)(?<!Sr)(?<!Jr)(?<!vs)(?<!etc)(?<!Vol)'
-									sentence_splitter_pattern = rf'{abbr}(?<=[.!?]["”]*)(?=\s*[A-Z]*|$)'
+									sentence_splitter_pattern = rf'{abbr}[.!?]["”]*(?=\s*[A-Z]*|$)'
 									sentences_split = re.split(sentence_splitter_pattern, text)
 									return [s.strip() for s in sentences_split if s.strip()]
 
