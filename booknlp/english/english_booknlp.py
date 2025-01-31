@@ -690,12 +690,13 @@ class EnglishBookNLP:
 									continue
 
 								cleaned_text = re.sub( r'^[“"”]?(.[^“"”\n]*)[“"”]?$', r'\1', cleaned_text);
+								cleaned_text = re.sub( r"’", r"'", cleaned_text)
 
 								def fix_apostrophes(text):
-									text = re.sub(r'(\w+)\s’s', r"\1's ", text)
+									# text = re.sub(r'(\w+)\s’s', r"\1's ", text)
 									text = re.sub(r'(\w+)\s\'s', r"\1's ", text)
 
-									text = re.sub(r'(\w+)\s(’)\s', r"\1' ", text)
+									# text = re.sub(r'(\w+)\s(’)\s', r"\1' ", text)
 									text = re.sub(r'(\w+)\s(\')\s', r"\1' ", text)
 
 									return text.strip()
@@ -721,9 +722,12 @@ class EnglishBookNLP:
 									print(match)
 									print(sent)
 									print(cleaned_text)
-									t = cleaned_text[match.start():match.end() + 1]
-									if role.startswith('s'):
-										t = f'"{cleaned_text[match.start():match.end()+1]}"'
+									if not match:
+										t = sent
+									else:
+										t = cleaned_text[match.start():match.end() + 1]
+										if role.startswith('s'):
+											t = f'"{cleaned_text[match.start():match.end()+1]}"'
 
 									json_output[chapter]["lines"].append({"c": q[0], "t": t, "e": ["system"], "r": role})
 							
