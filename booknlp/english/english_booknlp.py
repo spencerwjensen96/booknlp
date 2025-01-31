@@ -716,9 +716,12 @@ class EnglishBookNLP:
 											role = 'nc'
 										elif role.startswith('s'):
 											role = 'sc'
+									print(match)
+									print(sent)
+									print(cleaned_text)
 									t = cleaned_text[match.start():match.end() + 1]
 									if role.startswith('s'):
-										t = f'"{cleaned_text[match.start():match.end() + 1]}"'
+										t = f'"{cleaned_text[match.start():match.end()+1]}"'
 
 									json_output[chapter]["lines"].append({"c": q[0], "t": t, "e": ["system"], "r": role})
 							
