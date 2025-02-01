@@ -636,7 +636,6 @@ class EnglishBookNLP:
 						for speaker_id, name, quote_, start, end in quotations:
 							# If there's a gap between the last_end and current start, add it
 							if last_end + 1 in quotations_start:
-								print("duplicate")
 								continue
 							if start > last_end:
 								in_between_tokens = [x.text for x in tokens[last_end:start]]
@@ -729,16 +728,27 @@ class EnglishBookNLP:
 										t = sent
 									else:
 										t = cleaned_text[match.start():match.end() + 1]
-										if role.startswith('s'):
-											t = f'"{cleaned_text[match.start():match.end()+1]}"'
+										#if role.startswith('s'):
+											#t = f'"{cleaned_text[match.start():match.end()+1]}"'
 									
-									json_output[chapter]["lines"].append({"c": q[0], "t": t, "e": ["system"], "r": role})
+									json_output[chapter]["lines"].append({"c": q[0], "t": t.strip(), "e": ["system"], "r": role})
 									
 							
 							last_speaker = q[0]
 
 						if len(json_output) == 0:
 							json_output.append({"lines": lines, "t": "book", "e": ["system"], "r": ""})
+
+						last_role = ''
+						for i, chapter in enumerate(json_output):
+							for j, line in enumerate(chapter["lines"]):
+								role = json_output[i]["lines"][j]["r"]
+								if role == 's'
+									json_output[i]["lines"][j]["t"] = f'"{json_output[i]["lines"][j]["t"]}'
+								if last_role == 's' or last_role == 'sn' or last_role == 'sc':
+									json_output[i]["lines"][j]["t"] = f'{json_output[i]["lines"][j]["t"]}"'
+								last_role = role
+								
 
 						with open(out.name, 'w', encoding='utf-8') as output_file:
 							json.dump(json_output, output_file, ensure_ascii=False)
