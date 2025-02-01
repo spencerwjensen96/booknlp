@@ -650,6 +650,9 @@ class EnglishBookNLP:
 													narration.append((narrator_id, narrator_name, words, last_end, last_end + len(words)))
 												last_end += len(words)
 									else:
+										if in_between_tokens in x for x[2] in quotations:
+											print("duplicate")
+											continue
 										narration.append((narrator_id, narrator_name, in_between_tokens, last_end, start))
 							last_end = end
 						
@@ -663,7 +666,7 @@ class EnglishBookNLP:
 						chapter = -1
 						lines = []
 						last_speaker = -1
-						last_line = ""
+						
 						# Step 3: Write all quotations to the output file
 						for q in sorted(quotations + narration, key=lambda x: x[3]):  # Sort by start index
 							role = ""
@@ -682,7 +685,6 @@ class EnglishBookNLP:
 							# chapter header
 							if q[0] == header_id:
 								json_output.append({"t": ' '.join(q[2]).strip('# '), "lines": lines, "e": ["system"], "r": "c"})
-								last_token = q[4]
 								chapter += 1
 								lines = []
 							else:
@@ -726,11 +728,9 @@ class EnglishBookNLP:
 										t = cleaned_text[match.start():match.end() + 1]
 										if role.startswith('s'):
 											t = f'"{cleaned_text[match.start():match.end()+1]}"'
-									if t in last_line:
-										print("duplicate")
-										continue
+									
 									json_output[chapter]["lines"].append({"c": q[0], "t": t, "e": ["system"], "r": role})
-									last_line = t
+									
 							
 							last_speaker = q[0]
 
