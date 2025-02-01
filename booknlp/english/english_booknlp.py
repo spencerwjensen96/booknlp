@@ -743,7 +743,7 @@ class EnglishBookNLP:
 						for i, chapter in enumerate(json_output):
 							for j, line in enumerate(chapter["lines"]):
 								role = json_output[i]["lines"][j]["r"]
-								if role == 's'
+								if role == 's':
 									json_output[i]["lines"][j]["t"] = f'"{json_output[i]["lines"][j]["t"]}'
 								if last_role == 's' or last_role == 'sn' or last_role == 'sc':
 									json_output[i]["lines"][j]["t"] = f'{json_output[i]["lines"][j]["t"]}"'
