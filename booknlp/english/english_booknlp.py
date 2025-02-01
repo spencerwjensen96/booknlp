@@ -610,6 +610,7 @@ class EnglishBookNLP:
 					with open(join(outFolder, "%s.book.json" % (idd)), "w", encoding="utf-8") as out:
 						lastP = None
 						quotations = []
+						quotations_start = set()
 						start_time=time.time()
 
 						# Step 1: Collect original quotations
@@ -623,6 +624,7 @@ class EnglishBookNLP:
 								name = "None"
 							quote_ = [x.text for x in tokens[start:end]]
 							quotations.append((speaker_id, name, quote_, start, end))
+							quotations_start.add(start)
 						
 						# Step 2: Add in-between text as implicit quotations
 						narrator_id = -1
@@ -633,6 +635,9 @@ class EnglishBookNLP:
 						narration = []
 						for speaker_id, name, quote_, start, end in quotations:
 							# If there's a gap between the last_end and current start, add it
+							if last_end + 1 in quotations_start:
+								print("duplicate")
+								continue
 							if start > last_end:
 								in_between_tokens = [x.text for x in tokens[last_end:start]]
 								if in_between_tokens:  # Avoid adding empty text
