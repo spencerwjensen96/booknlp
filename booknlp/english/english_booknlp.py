@@ -635,9 +635,7 @@ class EnglishBookNLP:
 						narration = []
 						for speaker_id, name, quote_, start, end in quotations:
 							# If there's a gap between the last_end and current start, add it
-							if last_end + 1 in quotations_start:
-								continue
-							if start > last_end:
+							if start > last_end + 1:
 								in_between_tokens = [x.text for x in tokens[last_end:start]]
 								if in_between_tokens:  # Avoid adding empty text
 									sentence = " ".join(in_between_tokens)
