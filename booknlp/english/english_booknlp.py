@@ -740,14 +740,17 @@ class EnglishBookNLP:
 							json_output.append({"lines": lines, "t": "book", "e": ["system"], "r": ""})
 
 						last_role = ''
+						last_id = -99
 						for i, chapter in enumerate(json_output):
 							for j, line in enumerate(chapter["lines"]):
 								role = json_output[i]["lines"][j]["r"]
+								id = json_output[i]["lines"][j]["c"]
 								if role == 's':
 									json_output[i]["lines"][j]["t"] = f'"{json_output[i]["lines"][j]["t"]}'
-								if last_role == 's' or last_role == 'sn' or last_role == 'sc':
+								if id != last_id and (last_role == 's' or last_role == 'sn' or last_role == 'sc'):
 									json_output[i]["lines"][j]["t"] = f'{json_output[i]["lines"][j]["t"]}"'
 								last_role = role
+								last_id = id
 								
 
 						with open(out.name, 'w', encoding='utf-8') as output_file:
