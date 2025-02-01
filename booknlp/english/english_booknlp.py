@@ -663,7 +663,7 @@ class EnglishBookNLP:
 						chapter = -1
 						lines = []
 						last_speaker = -1
-						last_segment = ""
+						last_segment = ('','','',-1,'')
 						# Step 3: Write all quotations to the output file
 						for q in sorted(quotations + narration, key=lambda x: x[3]):  # Sort by start index
 							print(last_segment)
