@@ -668,7 +668,7 @@ class EnglishBookNLP:
 						for q in sorted(quotations + narration, key=lambda x: x[3]):  # Sort by start index
 							print(last_segment)
 							print(q)
-							if q[3] == last_segment[3]
+							if q[3] == last_segment[3]:
 								print("duplicate")
 							last_segment = q
 							
