@@ -650,9 +650,6 @@ class EnglishBookNLP:
 													narration.append((narrator_id, narrator_name, words, last_end, last_end + len(words)))
 												last_end += len(words)
 									else:
-										if in_between_tokens in x for x[2] in quotations:
-											print("duplicate")
-											continue
 										narration.append((narrator_id, narrator_name, in_between_tokens, last_end, start))
 							last_end = end
 						
@@ -666,9 +663,15 @@ class EnglishBookNLP:
 						chapter = -1
 						lines = []
 						last_speaker = -1
-						
+						last_segment = ""
 						# Step 3: Write all quotations to the output file
 						for q in sorted(quotations + narration, key=lambda x: x[3]):  # Sort by start index
+							print(last_segment)
+							print(q)
+							if q[3] == last_segment[3]
+								print("duplicate")
+							last_segment = q
+							
 							role = ""
 							# speaker continues
 							if q[0] == last_speaker:
