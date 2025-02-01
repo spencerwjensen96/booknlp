@@ -748,7 +748,7 @@ class EnglishBookNLP:
 								if role == 's':
 									json_output[i]["lines"][j]["t"] = f'"{json_output[i]["lines"][j]["t"]}'
 								if id != last_id and (last_role == 's' or last_role == 'sn' or last_role == 'sc'):
-									json_output[i]["lines"][j-1]["t"] = f'{json_output[i]["lines"][j]["t"]}"'
+									json_output[i]["lines"][j-1]["t"] = f'{json_output[i]["lines"][j-1]["t"]}"'
 								last_role = role
 								last_id = id
 								
